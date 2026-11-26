@@ -1,9 +1,14 @@
 /* DN3008 Generative Art, Ashley Hi 2026
- * Week 10 - L Systems
- * By Jocelyn Eddy
- * 
- * PART 2 is the engine that draws the plate. You don't need to touch it.
- */
+* Week 10 - L Systems
+* Assignment - Jocelyn Eddy
+* The template for this week was inspired by the historical plant classification documents, therefore I thought it would be interesting to explore this in the context of another medium. 
+* So I was inspired to modify the herbarium plate into the style of a cyanotypes. They were traditionally used in the 19th century to capture the form and size of plants in a quick manner. 
+* Therefore instead of representing the colours of the flower, I turned the petals and stems into shades of white to contrast the navy paint background.
+* 
+* I modified the scale of the flower, shrinking it so it fit within the navy paint marks. I also moved it lower on the plate for that aim too. 
+* 
+* Paint Background Source Image = https://www.magnific.com/free-vector/abstract-watercolor-brush-stroke-white-background_256122713.htm#fromView=keyword&page=1&position=0&uuid=f8f3ade9-953b-4a91-8ad5-7fbf64f226fe&track=ais_hybrid&query=Brush+stroke+background
+*/
 
 // ╔═══════════════════════════════════════════════════════════════╗
 // ║  PART 1 · YOUR PLANT  ·  edit the values in this part         ║
@@ -21,14 +26,14 @@ const GENERATIONS = 4;
 // ── STEP 2 · THICKNESS AND COLOUR ─────────────────────────────────
 const TRUNK_WIDTH = 4;
 const THICKNESS = 0.7;
-const STEM_COLOUR = [70, 60, 40];
-const TIP_COLOUR = [110, 140, 70];
+const STEM_COLOUR = [255,255,255];
+const TIP_COLOUR = [100,100,100];
 
 // ── STEP 3 · LEAVES AND FLOWERS ───────────────────────────────────
-const LEAF_COLOUR = [95, 130, 70];
+const LEAF_COLOUR = [200,200,200];
 const LEAF_SIZE = 22;
-const FLOWER_COLOUR = [118,83,138];
-const FLOWER_CENTRE = [72,35,92];
+const FLOWER_COLOUR = [255,255,255];
+const FLOWER_CENTRE = [180,180,180];
 const FLOWER_SIZE = 15;
 
 // ── STEP 4 · YOUR LABEL ───────────────────────────────────────────
@@ -47,6 +52,12 @@ const INK = [60, 52, 40];
 const MAX_LENGTH = 300000; // stop growing if the text gets too long
 let sentence, plantLen, plantDepth, plantFit;
 let warning = ""; // shown at the top of the plate if something is off
+let bgImg; 
+
+function preload() {
+  bgImg = loadImage("cyanotype.png");
+  // This loads the cyanotype image into the bgImg variable
+}
 
 function setup() {
   createCanvas(720, 960); // portrait, like a herbarium sheet
@@ -75,10 +86,15 @@ function grow() {
   plantDepth = maxDepth(sentence);
   const box = { x: 60, y: 70, w: width - 120, h: height - 330 };
   const m = measure(sentence, ANGLE);
-  plantLen = min(box.h / m.h, box.w / m.w);
+  
+
+  plantLen = min(box.h / m.h, box.w / m.w) * 0.8; 
+  // The plant size is multiplied by 0.8 so that it fits within the cyanotype background.
+  
   plantFit = {
     x: box.x + box.w / 2 - ((m.minX + m.maxX) / 2) * plantLen,
-    y: box.y + box.h,
+    y: box.y + box.h + 90, 
+    // the position of the flower is modified, moved lower so that it fits on the paint marks. 
   };
 }
 
@@ -92,6 +108,11 @@ function rewrite(s) {
 function draw() {
   background(...PAPER);
   drawSheet();
+  push();
+  tint(255, 255);
+  image(bgImg, 20, 10, width - 40, height - 210); 
+  pop();
+
   drawPlant();
   drawLabel();
 }
